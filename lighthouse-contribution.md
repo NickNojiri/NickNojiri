@@ -23,6 +23,19 @@ Added a `Plugins: <names>` entry to the report footer's metadata block, shown on
 - `report/test/renderer/report-renderer-test.js` — unit tests for both the plugin and no-plugin cases
 - Generated/regenerated via the project's own tooling: `components.js` (bundled report template), locale files (`en-US.json`, `en-XL.json`), and sample report fixtures (`sample_v2.json`, `sample-flow-result.json`)
 
+**The core change**, in `report/renderer/report-renderer.js`:
+
+```js
+const pluginNames = Object.keys(report.categories)
+  .filter(categoryId => ReportUtils.isPluginCategory(categoryId));
+if (pluginNames.length > 0) {
+  metaItems.push(['plugin',
+    `${Globals.strings.runtimeSettingsPlugins}: ${pluginNames.join(', ')}`]);
+}
+```
+
+Deliberately small: it reuses the codebase's existing plugin-detection convention rather than introducing new plumbing, adds nothing to the LHR schema, and cannot affect reports that don't use plugins.
+
 ## Verification
 
 - All 273 existing + new tests in `report/test` pass, including the accessibility (axe) render test
