@@ -42,3 +42,30 @@ One pattern, mirroring the four existing 40-character token patterns exactly, pl
 - Scoped deliberately after studying why the prior attempt (#1098) stalled: review flagged scope creep and missing tests, so this PR does one documented thing with tests
 - Followed the project's conventional-commit format (`fix(sanitizer): …`)
 - Worked from a personal fork per the standard external-contributor workflow
+
+---
+
+## Contribution — Require a trusted author for the `@claude` workflow trigger
+
+**Pull Request:** [anthropics/claude-code-action#1503](https://github.com/anthropics/claude-code-action/pull/1503)
+**Branch:** `fix/trigger-workflow-author-guard` on [NickNojiri/claude-code-action](https://github.com/NickNojiri/claude-code-action) (fork)
+**Addresses:** issues #1481, #1445, #1068
+
+### The problem
+
+The example workflows users copy to set up the action — `examples/claude.yml`, `examples/claude-wif.yml`, and the project's own dogfooding CI workflow `.github/workflows/claude.yml` — gated the job purely on trigger-phrase presence (`contains(github.event.comment.body, '@claude')`), with no check on *who* posted the comment/review/issue. Multiple issues (#1481, #1445, #1068) reported the downstream risk: a bot quoting an earlier `@claude` mention back into a thread can re-trigger the workflow, and on public repos any commenter starts a runner before permission checks run.
+
+### The contribution
+
+Added an author gate to the `if:` condition in all three files: `github.event.sender.type != 'Bot'` plus an `author_association` check (`OWNER`/`MEMBER`/`COLLABORATOR`) applied per event type against the field each event actually populates (`comment`/`review`/`issue`).
+
+The interesting part was scoping it honestly. Issue #1481 asked to fix `docs/usage.md` and the `/install-github-app` command — but I verified `docs/usage.md` has no trigger `if:` example, and `/install-github-app` lives in a *different* repo (the Claude Code CLI), so neither was actually in scope here. I also traced the action's runtime path and confirmed `checkHumanActor` / `checkWritePermissions` already reject bot and non-writer actors before Claude executes. So I wrote the PR to describe the change accurately: a fail-fast + safer-template improvement (the job no longer spins up a runner for an untrusted trigger, and the copy-pasted examples now demonstrate the safe pattern), **not** a critical-vulnerability fix. Overstating it would have been the easy thing; getting the scope right is the point.
+
+**Files touched:**
+- `examples/claude.yml`, `examples/claude-wif.yml`, `.github/workflows/claude.yml` — author gate on the trigger condition
+
+### Verification
+
+- YAML syntax validated for all three files
+- `bun test` — 770 pass, 0 fail (config-only change, no test churn)
+- `tsc` type-check and Prettier clean

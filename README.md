@@ -14,6 +14,7 @@ Contributing to **[Google Lighthouse](https://github.com/GoogleChrome/lighthouse
 Contributing to **[Anthropic's Claude Code Action](https://github.com/anthropics/claude-code-action)**:
 
 - [PR #1502](https://github.com/anthropics/claude-code-action/pull/1502) — closed a security gap in the content sanitizer: GitHub App user-to-server (`ghu_`) tokens, the one missing prefix from GitHub's documented token formats, now get redacted before issue/PR content reaches the model. Includes regression tests; full suite green (771 tests).
+- [PR #1503](https://github.com/anthropics/claude-code-action/pull/1503) — added a trusted-author gate to the `@claude` trigger in the project's example and CI workflows (addresses issues #1481, #1445, #1068), so untrusted or bot triggers fail fast before a runner starts.
 
 → [Read the full write-up](./claude-code-action-contribution.md)
 
