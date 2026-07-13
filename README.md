@@ -4,7 +4,11 @@ Software developer focused on web technologies, currently contributing to open s
 
 ## 🔭 Open Source
 
-**[Google Lighthouse](https://github.com/GoogleChrome/lighthouse)** — implemented [issue #9934](https://github.com/GoogleChrome/lighthouse/issues/9934): surface the plugins used during a run in the report footer. Includes i18n, dark-mode-aware iconography, and unit tests, verified against the project's full lint/type-check/test/i18n CI suite.
+Contributing to **[Google Lighthouse](https://github.com/GoogleChrome/lighthouse)**:
+
+- [#9934](https://github.com/GoogleChrome/lighthouse/issues/9934) — surface the plugins used during a run in the report footer. Includes i18n, dark-mode-aware iconography, and unit tests, verified against the project's full lint/type-check/test/i18n CI suite.
+- [#14718](https://github.com/GoogleChrome/lighthouse/issues/14718) — smoke test coverage proving CSS nesting is handled correctly by the `unused-css-rules` audit, with regression protection in both directions (unused nested rules counted, used nested rules not falsely flagged).
+
 → [Read the full write-up](./lighthouse-contribution.md)
 
 ## 🛠 Projects
