@@ -11,6 +11,12 @@ Contributing to **[Google Lighthouse](https://github.com/GoogleChrome/lighthouse
 
 → [Read the full write-up](./lighthouse-contribution.md)
 
+Contributing to **[Anthropic's Claude Code Action](https://github.com/anthropics/claude-code-action)**:
+
+- [PR #1502](https://github.com/anthropics/claude-code-action/pull/1502) — closed a security gap in the content sanitizer: GitHub App user-to-server (`ghu_`) tokens, the one missing prefix from GitHub's documented token formats, now get redacted before issue/PR content reaches the model. Includes regression tests; full suite green (771 tests).
+
+→ [Read the full write-up](./claude-code-action-contribution.md)
+
 ## 🛠 Projects
 
 - **[relay](https://github.com/NickNojiri/relay)**
