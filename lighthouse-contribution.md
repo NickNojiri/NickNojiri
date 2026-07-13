@@ -8,7 +8,7 @@
 
 **Issue:** [#9934 — Display plugins in footer of report](https://github.com/GoogleChrome/lighthouse/issues/9934)
 **Branch:** `fix/plugin-footer-display` on [NickNojiri/lighthouse](https://github.com/NickNojiri/lighthouse) (fork)
-**Pull Request:** _pending — link to be added once opened against GoogleChrome/lighthouse_
+**Pull Request:** [GoogleChrome/lighthouse#17125](https://github.com/GoogleChrome/lighthouse/pull/17125)
 
 ### The problem
 
@@ -51,7 +51,7 @@ Deliberately small: it reuses the codebase's existing plugin-detection conventio
 
 **Issue:** [#14718 — Confirm correct handling of CSS nesting](https://github.com/GoogleChrome/lighthouse/issues/14718)
 **Branch:** `tests/css-nesting-coverage` on [NickNojiri/lighthouse](https://github.com/NickNojiri/lighthouse) (fork)
-**Pull Request:** _pending — link to be added once opened against GoogleChrome/lighthouse_
+**Pull Request:** [GoogleChrome/lighthouse#17127](https://github.com/GoogleChrome/lighthouse/pull/17127)
 
 ### The problem
 

@@ -6,8 +6,8 @@ Software developer focused on web technologies, currently contributing to open s
 
 Contributing to **[Google Lighthouse](https://github.com/GoogleChrome/lighthouse)**:
 
-- [#9934](https://github.com/GoogleChrome/lighthouse/issues/9934) — surface the plugins used during a run in the report footer. Includes i18n, dark-mode-aware iconography, and unit tests, verified against the project's full lint/type-check/test/i18n CI suite.
-- [#14718](https://github.com/GoogleChrome/lighthouse/issues/14718) — smoke test coverage proving CSS nesting is handled correctly by the `unused-css-rules` audit, with regression protection in both directions (unused nested rules counted, used nested rules not falsely flagged).
+- [PR #17125](https://github.com/GoogleChrome/lighthouse/pull/17125) — surface the plugins used during a run in the report footer (issue [#9934](https://github.com/GoogleChrome/lighthouse/issues/9934)). Includes i18n, dark-mode-aware iconography, and unit tests, verified against the project's full lint/type-check/test/i18n CI suite.
+- [PR #17127](https://github.com/GoogleChrome/lighthouse/pull/17127) — smoke test coverage proving CSS nesting is handled correctly by the `unused-css-rules` audit (issue [#14718](https://github.com/GoogleChrome/lighthouse/issues/14718)), with regression protection in both directions (unused nested rules counted, used nested rules not falsely flagged).
 
 → [Read the full write-up](./lighthouse-contribution.md)
 
