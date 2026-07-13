@@ -77,6 +77,48 @@ so a regression in nested-rule handling fails the smoke suite in either directio
 
 ---
 
+## Contribution 3 — Fix stale scores when switching device type in the Score Calculator
+
+**Issue:** [#16609 — Score not recalculated correctly when switching device type](https://github.com/GoogleChrome/lighthouse/issues/16609)
+**Branch:** `fix/scorecalc-device-switch-stale-values` on [NickNojiri/lighthouse](https://github.com/NickNojiri/lighthouse) (fork)
+**Pull Request:** [GoogleChrome/lighthouse#17130](https://github.com/GoogleChrome/lighthouse/pull/17130) (base: `gh-pages`)
+
+### The problem
+
+The [Lighthouse Score Calculator](https://googlechrome.github.io/lighthouse/scorecalc/) shares one set of metric values across device types, but each device type (mobile/desktop) defines its own min/max range per metric. Switching device type never re-clamped existing values into the new range. The native `<input type=range>` silently clamps its own *displayed* value when the range shrinks, but the app's underlying state kept the old out-of-range value — so the score computed from it was wrong, and switching back to the original device revealed the stale value had been retained the whole time.
+
+### How I found and fixed it
+
+The tool isn't in the `main` branch — it's hand-maintained on the orphan `gh-pages` branch, and its source map points at files that don't exist in the repo, so the deployed bundle is effectively the source. I traced the state flow, formed a hypothesis, and — since there's no test harness for this static tool — verified empirically with a Playwright script: served the page locally, drove the sliders, and reproduced the exact stale-state bug (including that a "reset" value was never actually applied internally). The fix re-clamps all metric values into the new device's per-metric min/max in `onDeviceChange`. Re-ran the same script post-fix: values stay bounded across repeated device toggles and in multi-version mode, with no console errors.
+
+### Verification
+
+- Playwright reproduction before/after (no unit-test harness exists for this tool)
+- Fix mirrors the clamp already applied in `Metric.onScoreChange`
+
+---
+
+## Contribution 4 — Clamp used bytes to avoid negative wasted-CSS reporting
+
+**Issue:** related to [#14718 — Confirm correct handling of CSS nesting](https://github.com/GoogleChrome/lighthouse/issues/14718)
+**Branch:** `fix/unused-css-negative-waste` on [NickNojiri/lighthouse](https://github.com/NickNojiri/lighthouse) (fork)
+**Pull Request:** [GoogleChrome/lighthouse#17131](https://github.com/GoogleChrome/lighthouse/pull/17131)
+
+### The problem
+
+`computeUsage` in `core/computed/unused-css.js` sums each used rule's byte range (`endOffset - startOffset`) and derives wasted bytes as `totalBytes - usedBytes`, with no clamping. CSS coverage can report overlapping ranges (a nested rule lives inside its parent's range) or the same rule more than once, so the summed used bytes can exceed the stylesheet size — producing **negative** wasted bytes/percent. A 0-length (empty inline) stylesheet also made the percentage `NaN`.
+
+### The fix
+
+I probed the function directly and confirmed the misbehavior empirically (overlapping ranges → `wastedBytes: -4`; duplicate rule → `-8`; empty sheet → `NaN`). The fix clamps `usedUncompressedBytes` to the stylesheet size and guards the zero-length case, keeping usage within [0, 100]%. This is the exact overlap concern raised in #14718 — so it complements Contribution 2 (the smoke test proves current correctness; this makes the code robust to a regression). I confirmed the sibling `unused-javascript-summary` already avoids this via a per-byte bitmap, which is why the CSS path was the outlier.
+
+### Verification
+
+- Regression tests added for overlapping ranges, duplicate used rules, and empty stylesheets
+- `unused-css` computed tests (8) + dependent audit tests (5) pass; `eslint` clean
+
+---
+
 ## Process notes
 
 - Signed Google's [Individual Contributor License Agreement](https://developers.google.com/open-source/cla/individual), required for all Lighthouse contributions

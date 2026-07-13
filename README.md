@@ -8,6 +8,8 @@ Contributing to **[Google Lighthouse](https://github.com/GoogleChrome/lighthouse
 
 - [PR #17125](https://github.com/GoogleChrome/lighthouse/pull/17125) — surface the plugins used during a run in the report footer (issue [#9934](https://github.com/GoogleChrome/lighthouse/issues/9934)). Includes i18n, dark-mode-aware iconography, and unit tests, verified against the project's full lint/type-check/test/i18n CI suite.
 - [PR #17127](https://github.com/GoogleChrome/lighthouse/pull/17127) — smoke test coverage proving CSS nesting is handled correctly by the `unused-css-rules` audit (issue [#14718](https://github.com/GoogleChrome/lighthouse/issues/14718)), with regression protection in both directions (unused nested rules counted, used nested rules not falsely flagged).
+- [PR #17130](https://github.com/GoogleChrome/lighthouse/pull/17130) — fix stale scores when switching device type in the Score Calculator (issue [#16609](https://github.com/GoogleChrome/lighthouse/issues/16609)); root-caused via Playwright since the tool has no test harness.
+- [PR #17131](https://github.com/GoogleChrome/lighthouse/pull/17131) — clamp used-byte accounting in the unused-CSS audit so overlapping/duplicate coverage ranges can't report negative wasted bytes (relates to [#14718](https://github.com/GoogleChrome/lighthouse/issues/14718)); with regression tests.
 
 → [Read the full write-up](./lighthouse-contribution.md)
 
@@ -15,6 +17,7 @@ Contributing to **[Anthropic's Claude Code Action](https://github.com/anthropics
 
 - [PR #1502](https://github.com/anthropics/claude-code-action/pull/1502) — closed a security gap in the content sanitizer: GitHub App user-to-server (`ghu_`) tokens, the one missing prefix from GitHub's documented token formats, now get redacted before issue/PR content reaches the model. Includes regression tests; full suite green (771 tests).
 - [PR #1503](https://github.com/anthropics/claude-code-action/pull/1503) — added a trusted-author gate to the `@claude` trigger in the project's example and CI workflows (addresses issues #1481, #1445, #1068), so untrusted or bot triggers fail fast before a runner starts.
+- [PR #1504](https://github.com/anthropics/claude-code-action/pull/1504) — closed an entity-encoding bypass in the prompt-injection sanitizer: `&#60;!-- … --&#62;` survived the comment-strip pass and was later decoded back into a live HTML comment reaching the model. Fixed by re-stripping after decoding; regression tests added.
 
 → [Read the full write-up](./claude-code-action-contribution.md)
 

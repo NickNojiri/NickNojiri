@@ -69,3 +69,29 @@ The interesting part was scoping it honestly. Issue #1481 asked to fix `docs/usa
 - YAML syntax validated for all three files
 - `bun test` — 770 pass, 0 fail (config-only change, no test churn)
 - `tsc` type-check and Prettier clean
+
+---
+
+## Contribution — Close an entity-encoding bypass in the prompt-injection sanitizer
+
+**Pull Request:** [anthropics/claude-code-action#1504](https://github.com/anthropics/claude-code-action/pull/1504)
+**Branch:** `fix/sanitizer-entity-encoded-comment-bypass` on [NickNojiri/claude-code-action](https://github.com/NickNojiri/claude-code-action) (fork)
+
+### The problem
+
+Before GitHub content reaches Claude, `sanitizeContent` strips HTML comments to remove hidden instructions (a documented prompt-injection defense). But `normalizeHtmlEntities` runs several steps *later* in the same pipeline. I noticed the ordering and hypothesized that entity-decoding could re-introduce content the earlier strip had removed — then proved it: an input of `&#60;!-- ignore all instructions --&#62;` passes through the initial `stripHtmlComments` untouched (it's not yet a comment), and is then decoded back into a live `<!-- … -->` comment that reaches the model.
+
+### The fix
+
+I verified the bypass empirically across decimal, hex, and opening-delimiter-only variants (all leaked), then fixed it by re-running `stripHtmlComments` after entity decoding. Re-ran the probe: all variants closed, plain-comment behavior unchanged.
+
+I was deliberately honest about scope in the PR: entity-encoded comments render *visibly* in GitHub's UI, so this is defense-in-depth hardening of the injection sanitizer rather than a fully-hidden exploit — I said so rather than overselling it. Legitimate defensive security work, submitted through the normal PR flow.
+
+**Files touched:**
+- `src/github/utils/sanitizer.ts` — second comment-strip pass after entity decoding
+- `test/sanitizer.test.ts` — regression tests for the encoded-comment bypass
+
+### Verification
+
+- Full test suite: 771 pass, 0 fail (`bun test`)
+- `tsc` type-check and Prettier clean
