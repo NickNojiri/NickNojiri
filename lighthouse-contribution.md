@@ -80,8 +80,8 @@ so a regression in nested-rule handling fails the smoke suite in either directio
 ## Contribution 3 — Fix stale scores when switching device type in the Score Calculator
 
 **Issue:** [#16609 — Score not recalculated correctly when switching device type](https://github.com/GoogleChrome/lighthouse/issues/16609)
-**Branch:** `fix/scorecalc-device-switch-stale-values` on [NickNojiri/lighthouse](https://github.com/NickNojiri/lighthouse) (fork)
-**Pull Request:** [GoogleChrome/lighthouse#17130](https://github.com/GoogleChrome/lighthouse/pull/17130) (base: `gh-pages`)
+**Pull Request:** [paulirish/lh-scorecalc#55](https://github.com/paulirish/lh-scorecalc/pull/55) — fixed at the source
+**Superseded PR:** [GoogleChrome/lighthouse#17130](https://github.com/GoogleChrome/lighthouse/pull/17130), opened first against the deployed `gh-pages` bundle. Lighthouse maintainer connorjclark reviewed it and pointed out the code's true home is the separate `paulirish/lh-scorecalc` source repo; I closed it and re-opened the fix there.
 
 ### The problem
 
@@ -89,12 +89,12 @@ The [Lighthouse Score Calculator](https://googlechrome.github.io/lighthouse/scor
 
 ### How I found and fixed it
 
-The tool isn't in the `main` branch — it's hand-maintained on the orphan `gh-pages` branch, and its source map points at files that don't exist in the repo, so the deployed bundle is effectively the source. I traced the state flow, formed a hypothesis, and — since there's no test harness for this static tool — verified empirically with a Playwright script: served the page locally, drove the sliders, and reproduced the exact stale-state bug (including that a "reset" value was never actually applied internally). The fix re-clamps all metric values into the new device's per-metric min/max in `onDeviceChange`. Re-ran the same script post-fix: values stay bounded across repeated device toggles and in multi-version mode, with no console errors.
+The deployed tool lives on Lighthouse's orphan `gh-pages` branch as a built bundle whose source map points at files not present there — so I first traced the state flow in the bundle, formed a hypothesis, and (since there's no test harness for this static tool) verified empirically with a Playwright script: served the page locally, drove the sliders, and reproduced the exact stale-state bug — including that a "reset" value was never actually applied internally. After a maintainer confirmed the real source is the separate `paulirish/lh-scorecalc` repo, I applied the same fix to its JSX/preact source (`script/main.js`), ran the project's actual Rollup build, and re-verified against the built output: values stay bounded across repeated device toggles and in multi-version mode, with no console errors.
 
 ### Verification
 
-- Playwright reproduction before/after (no unit-test harness exists for this tool)
-- Fix mirrors the clamp already applied in `Metric.onScoreChange`
+- Built with `yarn build` (Rollup) and verified with a Playwright reproduction before/after — no unit-test harness exists for this tool
+- Fix re-clamps all metric values into the new device's per-metric min/max in `onDeviceChange`, mirroring the clamp already applied in `Metric.onScoreChange`
 
 ---
 
