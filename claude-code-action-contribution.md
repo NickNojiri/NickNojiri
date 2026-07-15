@@ -7,6 +7,7 @@
 ## Contribution — Redact GitHub user-to-server (`ghu_`) tokens
 
 **Pull Request:** [anthropics/claude-code-action#1502](https://github.com/anthropics/claude-code-action/pull/1502)
+**Status:** ✅ **Merged** July 14, 2026 (approved and merged by maintainer @ashwin-ant)
 **Branch:** `fix/redact-ghu-tokens` on [NickNojiri/claude-code-action](https://github.com/NickNojiri/claude-code-action) (fork)
 
 ### The problem
