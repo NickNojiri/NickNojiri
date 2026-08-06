@@ -81,6 +81,7 @@ so a regression in nested-rule handling fails the smoke suite in either directio
 
 **Issue:** [#16609 — Score not recalculated correctly when switching device type](https://github.com/GoogleChrome/lighthouse/issues/16609)
 **Pull Request:** [paulirish/lh-scorecalc#55](https://github.com/paulirish/lh-scorecalc/pull/55) — fixed at the source
+**Status:** ✅ **Merged** 2026-08-06 (merged by maintainer @paulirish)
 **Superseded PR:** [GoogleChrome/lighthouse#17130](https://github.com/GoogleChrome/lighthouse/pull/17130), opened first against the deployed `gh-pages` bundle. Lighthouse maintainer connorjclark reviewed it and pointed out the code's true home is the separate `paulirish/lh-scorecalc` source repo; I closed it and re-opened the fix there.
 
 ### The problem
