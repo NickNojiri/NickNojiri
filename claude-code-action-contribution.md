@@ -96,3 +96,32 @@ I was deliberately honest about scope in the PR: entity-encoded comments render 
 
 - Full test suite: 771 pass, 0 fail (`bun test`)
 - `tsc` type-check and Prettier clean
+
+---
+
+## Contribution — Fix a `branch_name_template` crash on empty path segments
+
+**Pull Request:** [anthropics/claude-code-action#1539](https://github.com/anthropics/claude-code-action/pull/1539)
+**Status:** ✅ **Merged** 2026-08-08
+**Issue:** [#1527](https://github.com/anthropics/claude-code-action/issues/1527) — filed by me after finding the bug
+**Branch:** `fix/branch-template-empty-segment-slashes` on [NickNojiri/claude-code-action](https://github.com/NickNojiri/claude-code-action) (fork)
+
+### How I found it
+
+This one I found by *reading the code*, not from an issue. While looking at the branch-name machinery (there were two open PRs sanitizing `{{label}}` for issue #1491), I noticed `extractDescription()` returns an empty string for any title with no ASCII-alphanumeric content — emoji-only, CJK-only, or punctuation-only. `applyBranchTemplate` substitutes that empty string verbatim, so a template like `{{prefix}}{{description}}/{{entityNumber}}` yields `claude//123`. `validateBranchName` rejects consecutive slashes, and the throw propagates uncaught out of `setupBranch` — the entire run aborts.
+
+I reproduced it against `main` (emoji/CJK/punctuation titles all produce `claude//123` → throw), confirmed it was **distinct** from #1491 and its PRs (which only touch `{{label}}` and leave `{{description}}` alone), and filed issue #1527 documenting it with a paste-and-run repro before opening the PR — so the fix landed against an accepted, clearly-scoped issue rather than racing the label PRs.
+
+### The fix
+
+A `collapseEmptyPathSegments` helper applied on the custom-template path: collapse runs of slashes and drop any leading/trailing slash, so any empty segment (from `description`, `label`, `sha`, …) degrades to a valid name instead of crashing. Single-slash and dash separators are untouched, so existing template behavior is unchanged; a template that collapses to empty still falls back to the default format.
+
+**Files touched:**
+- `src/utils/branch-template.ts` — the `collapseEmptyPathSegments` helper
+- `test/branch-template.test.ts` — 4 regression tests, including a direct `validateBranchName` "does not throw" assertion
+
+### Verification
+
+- Full test suite: 774 pass, 0 fail (`bun test`)
+- `tsc` type-check and Prettier clean
+- Test-merged clean against upstream `main` before opening, and again during maintenance sweeps
